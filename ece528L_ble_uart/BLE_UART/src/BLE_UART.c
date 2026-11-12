@@ -29,35 +29,107 @@
 
 void BLE_UART_Init()
 {
+    P9->SEL0 |= 0xC0;
+    P9->SEL1 &= ~0xC0;
 
+    P1->SEL0 &= ~0x40;
+    P1->SEL1 &= ~0x40;
+    P1->DIR |= 0x40;
+
+    EUSCI_A3->CTLW0 |= 0x01;
+    EUSCI_A3->MCTLW &= ~0xFF;
+    EUSCI_A3->CTLW0 &= ~0x8000;
+    EUSCI_A3->CTLW0 &= ~0x4000;
+    EUSCI_A3->CTLW0 &= ~0x2000;
+    EUSCI_A3->CTLW0 &= ~0x1000;
+    EUSCI_A3->CTLW0 &= ~0x0800;
+    EUSCI_A3->CTLW0 &= ~0x0600;
+    EUSCI_A3->CTLW0 &= ~0x0100;
+    EUSCI_A3->CTLW0 |= 0x00C0;
+    EUSCI_A3->CTLW0 |= 0x00C0;
+
+    EUSCI_A3->BRW = 1250;
+    EUSCI_A3->IE &= ~0x0C;
+    EUSCI_A3->IE |= 0x03;
+    EUSCI_A3->CTLW0 &= ~0x01;
 }
 
 uint8_t BLE_UART_InChar()
 {
-    return 0;
+    while((EUSCI_A3->IFG & 0x01) == 0);
+
+    return EUSCI_A3->RXBUF;
 }
 
 void BLE_UART_OutChar(uint8_t data)
 {
+    while((EUSCI_A3->IFG & 0x02) == 0);
 
+    EUSCI_A3->TXBUF = data;
 }
 
 int BLE_UART_InString(char *buffer_pointer, uint16_t buffer_size)
 {
-    return 0;
+    int length = 0;
+    int string_size = 0;
+
+    char character = BLE_UART_InChar();
+
+    while(character != LF)
+    {
+        if(character == BS)
+        {
+            if(length)
+            {
+                buffer_pointer--;
+                length--;
+                BLE_UART_OutChar(BS);
+            }
+        }
+
+        else if(length < buffer_size)
+        {
+            *buffer_pointer = character;
+            buffer_pointer++;
+            length++;
+            string_size++;
+        }
+        character = BLE_UART_InChar();
+    }
+
+    *buffer_pointer = 0;
+
+    return string_size;
 }
 
 void BLE_UART_OutString(char *pt)
 {
-
+    while(*pt)
+    {
+        BLE_UART_OutChar(*pt);
+        pt++;
+    }
 }
 
 uint8_t Check_BLE_UART_Data(char BLE_UART_Data_Buffer[], char *data_string)
 {
-    return 0;
+    if(strstr(BLE_UART_Data_Buffer, data_string) != NULL)
+    {
+        return 0x01;
+    }
+    else
+    {
+        return 0x00;
+    }
 }
 
 void BLE_UART_Reset()
 {
+    P1->OUT |= 0x40;
+    Clock_Delay1ms(1000);
 
+    BLE_UART_OutString("ATZ\r\n");
+    Clock_Delay1ms(3000);
+
+    P1->OUT &= ~0x40;
 }
