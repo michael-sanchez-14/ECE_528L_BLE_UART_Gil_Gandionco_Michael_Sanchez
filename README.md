@@ -93,3 +93,6 @@ No known issues or limitations.
 
 * MSP432P4xx SimpleLink™ Microcontrollers
 Technical Reference Manual
+* Microchip's Introduction to Bluetooth Low Energy - [Link](https://developerhelp.microchip.com/xwiki/bin/view/applications/ble/introduction/)
+* Adafruit's guide on BLE - [Link](https://cdn-learn.adafruit.com/downloads/pdf/introduction-to-bluetooth-low-energy.pdf)
+* 
