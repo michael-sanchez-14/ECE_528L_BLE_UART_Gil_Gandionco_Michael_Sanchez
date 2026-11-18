@@ -11,8 +11,18 @@ The Bluetooth Low Energy (BLE) lab interfaces with the following:
 * Adafruit Bluefruit LE UART Friend - Bluetooth Low Energy (BLE) Module - [Product Link](https://www.adafruit.com/product/2479)
 
 ## Overview
+Lab 4 introduces us to both Bluetooth Low Energy(BLE) communcation and Universal Asynchronous Reciever/Transmitter(UART). To utilize UART we use the Enhanced Universal Serial Communcation Interface (eUSCI) module, specifically the EUSCI_A module. As for the BLE we use the Adafruit Bluefruit LE UART module. The goal of this lab is to control the robot from a mobile app using the Adafruit Bluefruit LE UART module.
 
 ## Components Used:
+For this lab we used the following components:
+* User LEDs of the TI MSP432 LaunchPad
+* Pololu Gearmotor with Encoder - [Product Link](https://www.pololu.com/product/3675)
+* Adafruit Bluefruit LE UART Friend - Bluetooth Low Energy (BLE) Module - [Product Link](https://www.adafruit.com/product/2479)
+* MSP432 LaunchPad
+* USB-A to Micro-USB cable
+* TI-RSLK MAX Chassis 
+* PMOD SWT
+* Oscilloscope Probes
 
 ## Pre Lab
 1. What is Bluetooth Low Energy (BLE)? How does it differ from regular Bluetooth in terms of power consumption and range?
@@ -78,17 +88,46 @@ Input/Output With Schmitt Trigger” of the MSP432P401R Datasheet
 ```
 
 ## Analysis and Results:
+To start this Lab we implemented the necessary code from the procedure. This code had us implementing the funcitons in the BLE_UART.c file as well as the main.c  file, these are the following functinons:
+* BLE_UART_INIT()
+  * Initializes UART
+* BLE_UART_InChar()
+  * Recieves Incoming character
+* BLE_UART_OutChar()
+  * Transmit outgoing character
+* BLE_UART_InString()
+  * Recieves and stores a string of characters
+* BLE_UART_OutString()
+  * Transmits string one character at a time
+* Check_BLE_UART_Data()
+  * Checks if the specified string exits in data
+* BLE_UART_Reset()
+  * Resets the BLE module
+* Process_BLE_UART_Data()
+  * Checks if the user sends a specific string
+
+After completing the Procedure we moved on to the task portion of the lab. The first part of the task wanted us to send the following data and check the output with an oscilloscope:
+* 0xAA
+* 0x55
+* 0xFF
+* 0x00
+
+For our results we only caputred data for 0xAA and 0x55:
+* [0xAA](0xAA.jpg)
+* [0x55](0x55.jpg)
+
+One thing to note is that we are sending the data LSB first. After doing this
 
 ## Known Issues or Limitations
 No known issues or limitations.
 
 ## Author Contribution
 * Michael Sanchez
-    * 
-    * 
+    * Worked on the Procedure portion of the Lab
+    * Word on the Even quesitons in the Pre Lab
 * Gil Gandionco 
-    * 
-    * 
+    * Worked on the Task portion of the Lab
+    * Worked on the Odd questions in the Pre Lab
 ## References
 
 * MSP432P4xx SimpleLink™ Microcontrollers
