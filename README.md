@@ -116,7 +116,16 @@ For our results we only caputred data for 0xAA and 0x55:
 * [0xAA](0xAA.jpg)
 * [0x55](0x55.jpg)
 
-One thing to note is that we are sending the data LSB first. After doing this
+One thing to note is that we are sending the data LSB first. After doing this we connected the PMOD SWT module that we used in a previous lab. The switches were used to transmitt certain data. Here is a table of the switch cases:
+| Active Switch | All Other Switches | Byte Transmitted |
+|:--------------|:------------------:|----------------:|
+| SW1          | SW2, SW3, SW4 = OFF| 0xAA            |
+| SW2          | SW1, SW3, SW4 = OFF| 0x10            |
+| SW3          | SW1, SW2, SW4 = OFF| 0xF0            |
+| SW4          | SW1, SW2, SW3 = OFF| 0x0F            |
+| Other        |                    | 0x00            |
+
+For our results we decided to capture a video of us flipping through each case [Result](Taskb.mp4). For the last task we were asked to write functions that allow us to control the robot using the Bluefruit connect mobile app.
 
 ## Known Issues or Limitations
 No known issues or limitations.
