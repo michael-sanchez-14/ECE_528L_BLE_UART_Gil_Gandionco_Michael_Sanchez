@@ -101,6 +101,24 @@ int BLE_UART_InString(char *buffer_pointer, uint16_t buffer_size)
 
     return string_size;
 }
+void BLE_UART_InPacket(char *buffer_pointer)
+{
+    char character = BLE_UART_InChar();
+
+    while(character != 0x21)
+    {
+        character = BLE_UART_InChar();
+    }
+    *buffer_pointer = character;
+    buffer_pointer++;
+
+    for(int i = 0; i < 4; i++)
+    {
+        character = BLE_UART_InChar();
+        *buffer_pointer = character;
+        buffer_pointer++;
+    }
+}
 
 void BLE_UART_OutString(char *pt)
 {

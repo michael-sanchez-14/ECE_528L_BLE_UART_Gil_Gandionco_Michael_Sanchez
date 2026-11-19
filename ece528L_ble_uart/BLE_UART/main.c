@@ -27,7 +27,6 @@
 #include "inc/Motor.h"
 #include "inc/BLE_UART.h"
 
-
 #define PWM_NOMINAL 3000
 
 void Process_BLE_UART_Data(char BLE_UART_Buffer[])
@@ -47,6 +46,48 @@ void Process_BLE_UART_Data(char BLE_UART_Buffer[])
         printf("BLE UART Command Not Found \n");
     }
 }
+
+void Decode_Controller_Packet(char BLE_UART_Buffer[])
+{
+    if(BLE_UART_Buffer[0] == 0x21 && BLE_UART_Buffer[1] == 0x42)
+    {
+        printf("valid Button Packet \n");
+        if(BLE_UART_Buffer[3] == 0x30)
+        {
+            Motor_Stop();
+        }
+        if(BLE_UART_Buffer[3] == 0x31)
+        {
+            switch (BLE_UART_Buffer[2])
+            {
+                case 0x35:
+                    //Motor_Forward(PWM_NOMINAL * 0.3, PWM_NOMINAL * 0.3);
+                    Motor_Forward(PWM_NOMINAL, PWM_NOMINAL);
+                    break;
+
+                case 0x36:
+                    //Motor_Backward(PWM_NOMINAL * 0.3, PWM_NOMINAL * 0.3);
+                    Motor_Backward(PWM_NOMINAL, PWM_NOMINAL);
+                    break;
+
+                case 0x37:
+                    //Motor_Left(PWM_NOMINAL * 0.3, PWM_NOMINAL * 0.3);
+                    Motor_Left(PWM_NOMINAL, PWM_NOMINAL);
+                    break;
+
+                case 0x38:
+                    //Motor_Right(PWM_NOMINAL * 0.3, PWM_NOMINAL * 0.3);
+                    Motor_Right(PWM_NOMINAL, PWM_NOMINAL);
+                    break;
+            }
+        }
+    }
+    else
+    {
+        printf("Invalid Button Packet \n");
+    }
+}
+
 int main(void)
 {
 
@@ -70,17 +111,36 @@ int main(void)
 
     while(1)
     {
-        int string_size = BLE_UART_InString(BLE_UART_Buffer, BLE_UART_BUFFER_SIZE);
+        //int string_size = BLE_UART_InString(BLE_UART_Buffer, BLE_UART_BUFFER_SIZE);
+        BLE_UART_InPacket(BLE_UART_Buffer);
 
         printf("BLE UART DATA: ");
 
-        for(int i = 0; i < string_size; i++)
+        for(int i = 0; i < 5; i++)
         {
             printf("%c", BLE_UART_Buffer[i]);
         }
 
         printf("\n");
 
-        Process_BLE_UART_Data(BLE_UART_Buffer);
+        //Process_BLE_UART_Data(BLE_UART_Buffer);
+        Decode_Controller_Packet(BLE_UART_Buffer);
+
+        //Part A
+//        BLE_UART_OutChar(0xAA);
+//        Clock_Delay1ms(100);
+
+//        BLE_UART_OutChar(0x55);
+//        Clock_Delay1ms(100);
+//        BLE_UART_OutChar(0xFF);
+//        Clock_Delay1ms(100);
+//        BLE_UART_OutChar(0x00);
+//        Clock_Delay1ms(100);
+
+        //Part B
+//        uint8_t button_status = Get_Buttons_Status();
+//        uint8_t switch_status = Get_PMOD_SWT_Status();
+//        LED_Controller(button_status, switch_status);
+//        Clock_Delay1ms(100);
     }
 }

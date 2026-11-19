@@ -92,7 +92,7 @@ void Buttons_Init(void)
     P1->SEL1 &= ~0x12;
     P1->DIR &= ~0x12;
     P1->REN |= 0x12;
-    P1->OUT |= 0x12;
+    P1->OUT &= ~0x12;
 }
 
 uint8_t Get_Buttons_Status(void)
@@ -121,6 +121,9 @@ void PMOD_SWT_Init(void)
     P10->SEL0 &= ~0xF;
     P10->SEL1 &= ~0xF;
     P10->DIR &= ~0xF;
+
+    P10->REN |= 0xF;
+    P10->OUT &= ~0xF;
 }
 
 uint8_t Get_PMOD_SWT_Status(void)
@@ -194,21 +197,33 @@ void LED_Controller(uint8_t button_status, uint8_t switch_status)
 {
     switch(switch_status)
     {
-        case 0x00:
+        case 0x01:
         {
-            LED_Pattern_1(button_status);
+            BLE_UART_OutChar(0xAA);
         }
         break;
 
-        case 0x01:
+        case 0x02:
         {
-            LED_Pattern_2();
+            BLE_UART_OutChar(0x10);
+        }
+        break;
+
+        case 0x04:
+        {
+            BLE_UART_OutChar(0xF0);
+        }
+        break;
+
+        case 0x08:
+        {
+            BLE_UART_OutChar(0x0F);
         }
         break;
 
         default:
         {
-            LED_Pattern_1(button_status);
+            BLE_UART_OutChar(0x00);
         }
     }
 }
