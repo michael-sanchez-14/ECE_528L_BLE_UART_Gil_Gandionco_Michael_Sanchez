@@ -125,7 +125,7 @@ One thing to note is that we are sending the data LSB first. After doing this we
 | SW4          | SW1, SW2, SW3 = OFF| 0x0F            |
 | Other        |                    | 0x00            |
 
-For our results we decided to capture a video of us flipping through each case [Result](Taskb.mp4). For the last task we were asked to write functions that allow us to control the robot using the Bluefruit connect mobile app.
+For our results we decided to capture a video of us flipping through each case [Result](Taskb.mp4). For the last task we were asked to write code that allow us to control the robot using the Bluefruit connect mobile app. To accomplish this a switch case was used, where each case related to an arrow that was pressed, the arrow representing the direction the robot is going.
 
 ## Known Issues or Limitations
 No known issues or limitations.
