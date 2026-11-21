@@ -11,7 +11,7 @@ The Bluetooth Low Energy (BLE) lab interfaces with the following:
 * Adafruit Bluefruit LE UART Friend - Bluetooth Low Energy (BLE) Module - [Product Link](https://www.adafruit.com/product/2479)
 
 ## Overview
-Lab 4 introduces us to both Bluetooth Low Energy(BLE) communcation and Universal Asynchronous Reciever/Transmitter(UART). To utilize UART we use the Enhanced Universal Serial Communcation Interface (eUSCI) module, specifically the EUSCI_A module. As for the BLE we use the Adafruit Bluefruit LE UART module. The goal of this lab is to control the robot from a mobile app using the Adafruit Bluefruit LE UART module.
+The lab introduces both Bluetooth Low Energy(BLE) communcation and Universal Asynchronous Reciever/Transmitter(UART). The lab requires to develop a UART driver, specifically the EUSCI_A module, that allows the MSP432 LaunchPad to communicate with an Adafruit BlueFruit LE UART module. Using the Bluefruit Connect mobile app on the phone, wireless commands can be sent to the MSP432 to control the RGB LED and the motors of the robot.
 
 ## Components Used:
 For this lab we used the following components:
@@ -88,7 +88,7 @@ Input/Output With Schmitt Trigger” of the MSP432P401R Datasheet
 ```
 
 ## Analysis and Results:
-To start this Lab we implemented the necessary code from the procedure. This code had us implementing the funcitons in the BLE_UART.c file as well as the main.c  file, these are the following functinons:
+The start of the lab required the implementation of several UART driver functions in the BLE_UART.c file as well as the main.c file. The functions are the following:
 * BLE_UART_INIT()
   * Initializes UART
 * BLE_UART_InChar()
@@ -106,17 +106,18 @@ To start this Lab we implemented the necessary code from the procedure. This cod
 * Process_BLE_UART_Data()
   * Checks if the user sends a specific string
 
-After completing the Procedure we moved on to the task portion of the lab. The first part of the task wanted us to send the following data and check the output with an oscilloscope:
+After implement the functions, the first part the lab required to very UART communication by sending the following data and checking the output with an oscilloscope:
 * 0xAA
 * 0x55
 * 0xFF
 * 0x00
 
-For our results we only caputred data for 0xAA and 0x55:
+The output of the oscilloscope for two of the bytes are displayed in the following photos:
 * [0xAA](0xAA.jpg)
 * [0x55](0x55.jpg)
 
-One thing to note is that we are sending the data LSB first. After doing this we connected the PMOD SWT module that we used in a previous lab. The switches were used to transmitt certain data. Here is a table of the switch cases:
+Note that the least significant bit (LSB) is sent first which follows the configuration of UART. The next part required connecting the PMOD SWT module to select which byte is transmitted. Here is a table of the switch cases:
+
 | Active Switch | All Other Switches | Byte Transmitted |
 |:--------------|:------------------:|----------------:|
 | SW1          | SW2, SW3, SW4 = OFF| 0xAA            |
@@ -125,7 +126,19 @@ One thing to note is that we are sending the data LSB first. After doing this we
 | SW4          | SW1, SW2, SW3 = OFF| 0x0F            |
 | Other        |                    | 0x00            |
 
-For our results we decided to capture a video of us flipping through each case [Result](Taskb.mp4). For the last task we were asked to write code that allow us to control the robot using the Bluefruit connect mobile app. To accomplish this a switch case was used, where each case related to an arrow that was pressed, the arrow representing the direction the robot is going.
+The results are captured in a video of all the switch cases, [Result](Taskb.mp4). The last task involved using wireless commands to control the robot's movement using the Bluefruit Connect mobile app. When a directional button is pressed or released, the mobile app transmits a five-byte packet:
+
+| Byte | Description | Example |
+| --- | --- | --- |
+| Byte 0 | Header | ! (0x21) |
+| Byte 1 | Packet Type | B (0x42) - Button Packet |
+| Byte 2 | Button number | 5 = Up |
+| Byte 3 | Button State | 1 = Pressed |
+| Byte 4 | Checksum | Add the bytes and inverts the sum |
+
+ The function, BLE_UART_InPacket(), was implemented to read exactly five bytes, beginning with the "!" header. It would discard all incoming characters until it received the "!" header (0x21) so it always starts the reading at the beginning of a packet. It stores the header and the next four bytes in the BLE_UART_buffer array.
+
+ Another function, Decode_Controller_Packet(), would take the bytes stored in the BLE_UART_buffer and was used to validate the header and packet type. It would also identify the button number and state. Then, it would call the corresponding motor function. The up button makes the robot move forward, down button makes the robot move backward, left button makes the robot rotate left, and right button makes the robot rotate right. When a button is released, the motor stops immediately.
 
 ## Known Issues or Limitations
 No known issues or limitations.
@@ -143,4 +156,3 @@ No known issues or limitations.
 Technical Reference Manual
 * Microchip's Introduction to Bluetooth Low Energy - [Link](https://developerhelp.microchip.com/xwiki/bin/view/applications/ble/introduction/)
 * Adafruit's guide on BLE - [Link](https://cdn-learn.adafruit.com/downloads/pdf/introduction-to-bluetooth-low-energy.pdf)
-* 
